@@ -1,4 +1,4 @@
-% This matlab example was created with DLL version 3.24.2
+% This matlab example was created with DLL version 3.24.3
 
 % drvno = 1 selects the first PCIe board. This is example is for one PCIe board.
 drvno = 1;
