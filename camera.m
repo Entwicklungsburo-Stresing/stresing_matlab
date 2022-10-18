@@ -10,7 +10,8 @@ drvno = 1;
 
 %% load library when prototype file is existent
 [notfound, warnings] = loadlibrary('ESLSCDLL', @ESLSCDLL_prototype);
-
+%%
+%[methodinfo,structs,enuminfo,ThunkLibName]=ESLSCDLL_prototype();
 %% Initialize driver and board
 % Get a pointer to a c-style uint8 variable initialized to 0
 ptr_number_of_boards = libpointer('uint8Ptr', 0);
