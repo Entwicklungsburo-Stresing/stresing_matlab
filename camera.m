@@ -1,8 +1,8 @@
-% This matlab example was created with DLL version 3.26.8
+% This matlab example was created with DLL version 4.4.2
 % This script initializes the camera, does one measurement, reads the data and plots the data. The data access happens after the complete measurement is done. This is example is written for 1 camera on 1 PCIe board.
 
-% drvno selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 1.
-drvno = 1;
+% Selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 1.
+board_sel = 1;
 
 %% Create prototype file with library source.
 % This needs to be done, when there are no prototype files in this directory or when you want to update the DLL version.
@@ -30,9 +30,12 @@ if ~strcmp(status,'es_no_error')
 end
 %% Load the settings into the DLL.
 % See EBST_CAM/shared_src/struct.h for setting details.
-settings = load('settings.mat');
-settings = libstruct('global_settings',settings);
-status = calllib('ESLSCDLL','DLLSetGlobalSettings',settings);
+measurement_settings = load('measurement_settings.mat');
+measurement_settings = libstruct('measurement_settings_matlab',measurement_settings);
+camera_settings = load('camera_settings.mat');
+camera_settings = libstruct('camera_settings',camera_settings);
+% use the same settings for all possible 5 PCIe boards
+status = calllib('ESLSCDLL','DLLSetGlobalSettings_matlab',measurement_settings, camera_settings, camera_settings, camera_settings, camera_settings, camera_settings);
 if ~strcmp(status,'es_no_error')
     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
     error(msg)
@@ -52,10 +55,13 @@ if ~strcmp(status,'es_no_error')
 end
 %% Get data of one frame
 % allocate memory for destination pointer of size pixel * sizeof(uint16)
-frameArray = zeros(get(settings, 'pixel'),1);
+frameArray = zeros(get(camera_settings, 'pixel'),1);
 ptr_frameArray = libpointer('uint16Ptr',frameArray);
 % get data of sample 10 in block 0, camera 0
-status = calllib('ESLSCDLL', 'DLLReturnFrame', drvno, 10, 0, 0, ptr_frameArray, get(settings, 'pixel'));
+% The second pointer ptr_frameArray could be used to retrive data from a
+% second board. Since there is only one board in this example, the same
+% pointer is passed to this parameter.
+status = calllib('ESLSCDLL', 'DLLReturnFrame', board_sel, 10, 0, 0, ptr_frameArray, ptr_frameArray, get(camera_settings, 'pixel'));
 if ~strcmp(status,'es_no_error')
     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
     error(msg)
@@ -69,7 +75,7 @@ ylim([0 65535]);
 % blockArray = zeros(get(settings, 'pixel')*get(settings,'nos')*get(settings,'camcnt'),1);
 % ptr_blockArray = libpointer('uint16Ptr',blockArray);
 % % get data of block number 0
-% status = calllib('ESLSCDLL', 'DLLCopyOneBlock', drvno, 0, ptr_blockArray);
+% status = calllib('ESLSCDLL', 'DLLCopyOneBlock', board_sel, 0, ptr_blockArray, ptr_blockArray);
 % if ~strcmp(status,'es_no_error')
 %     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
 %     error(msg)
@@ -80,7 +86,7 @@ ylim([0 65535]);
 % dataArray = zeros(get(settings, 'pixel')*get(settings,'nos')*get(settings,'camcnt')*get(settings,'nob'),1);
 % ptr_dataArray = libpointer('uint16Ptr',dataArray);
 % % get all data
-% status = calllib('ESLSCDLL', 'DLLCopyAllData', drvno, ptr_dataArray);
+% status = calllib('ESLSCDLL', 'DLLCopyAllData', board_sel, ptr_dataArray, ptr_dataArray);
 % if ~strcmp(status,'es_no_error')
 %     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
 %     error(msg)
@@ -92,5 +98,6 @@ if ~strcmp(status,'es_no_error')
     error(msg)
 end
 %% Unload library
-clear('settings');
+clear('measurement_settings');
+clear('camera_settings');
 unloadlibrary('ESLSCDLL')
