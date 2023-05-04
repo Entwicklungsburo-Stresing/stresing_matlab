@@ -1,4 +1,4 @@
-% This matlab example was created with DLL version 4.4.2
+% This matlab example was created with DLL version 4.4.4
 % This script initializes the camera, does one measurement, reads the data and plots the data. The data access happens after the complete measurement is done. This is example is written for 1 camera on 1 PCIe board.
 
 % Selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 1.
