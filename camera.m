@@ -5,7 +5,7 @@
 board_sel = 1;
 
 %% Create prototype file with library source.
-% This needs to be done, when there are no prototype files in this directory or when you want to update the DLL version.
+% This needs to be done, when there are no prototype files in this directory or when you want to update the DLL version. For this call, some source files from the EBST_CAM repository are needed. Copy the folders shared_src/, Jungo/ and the file ESLSCDLL.h to this folder.
 %[notfound, warnings] = loadlibrary('ESLSCDLL', 'ESLSCDLL', 'mfilename', 'ESLSCDLL_prototype');
 
 %% load library when prototype file is existent
