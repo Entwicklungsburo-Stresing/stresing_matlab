@@ -1,8 +1,8 @@
-% This matlab example was created with DLL version 4.4.4
+% This matlab example was created with DLL version 4.8.2
 % This script initializes the camera, does one measurement, reads the data and plots the data. The data access happens after the complete measurement is done. This is example is written for 1 camera on 1 PCIe board.
 
-% Selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 1.
-board_sel = 1;
+% Selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 0.
+drvno = 0;
 
 %% Create prototype file with library source.
 % This needs to be done, when there are no prototype files in this directory or when you want to update the DLL version. For this call, some source files from the EBST_CAM repository are needed. Copy the folders shared_src/, Jungo/ and the file ESLSCDLL.h to this folder.
@@ -61,7 +61,7 @@ ptr_frameArray = libpointer('uint16Ptr',frameArray);
 % The second pointer ptr_frameArray could be used to retrive data from a
 % second board. Since there is only one board in this example, the same
 % pointer is passed to this parameter.
-status = calllib('ESLSCDLL', 'DLLReturnFrame', board_sel, 10, 0, 0, ptr_frameArray, ptr_frameArray, get(camera_settings, 'pixel'));
+status = calllib('ESLSCDLL', 'DLLReturnFrame', drvno, 10, 0, 0, get(camera_settings, 'pixel'), ptr_frameArray);
 if ~strcmp(status,'es_no_error')
     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
     error(msg)
