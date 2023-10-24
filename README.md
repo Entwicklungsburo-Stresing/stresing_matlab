@@ -12,4 +12,4 @@ In this repository you can find a matlab script [camera.m](./camera.m) for opera
 The source code of the DLL ESLSCDLL.dll can be found in the repository [EBST_CAM](https://github.com/Entwicklungsburo-Stresing/EBST_CAM).
 
 ## Documentation
-The script is following the basic operation as described in the chapter *How to operate Stresing cameras* of the [software documentation](https://entwicklungsburo-stresing.github.io/). The settings in camera_settings.mat and measurement_settings.mat  must match your camera system. You can find a description of every setting [here](https://entwicklungsburo-stresing.github.io/structmeasurement__settings.html).
+The script is following the basic operation as described in the chapter *How to operate Stresing cameras* of the [software documentation](https://entwicklungsburo-stresing.github.io/). The settings in camera_settings.mat and measurement_settings.mat  must match your camera system. You can find a description of every setting [here](https://entwicklungsburo-stresing.github.io/structmeasurement__settings__matlab.html) and [here](https://entwicklungsburo-stresing.github.io/structcamera__settings.html).
