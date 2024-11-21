@@ -1,4 +1,5 @@
-% This matlab example was created with DLL version 4.8.2
+clear all
+% This matlab example was created with DLL version 4.17.2
 % This script initializes the camera, does one measurement, reads the data and plots the data. The data access happens after the complete measurement is done. This is example is written for 1 camera on 1 PCIe board.
 
 % Selects the PCIe board. While there is only 1 PCIe board in this exmaple, it is always 0.
@@ -61,25 +62,30 @@ ptr_frameArray = libpointer('uint16Ptr',frameArray);
 % The second pointer ptr_frameArray could be used to retrive data from a
 % second board. Since there is only one board in this example, the same
 % pointer is passed to this parameter.
-status = calllib('ESLSCDLL', 'DLLReturnFrame', drvno, 10, 0, 0, get(camera_settings, 'pixel'), ptr_frameArray);
+status = calllib('ESLSCDLL', 'DLLCopyOneSample', drvno, 10, 0, 0, ptr_frameArray);
 if ~strcmp(status,'es_no_error')
     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
     error(msg)
 end
 %% Display data
+% h=figure(1)
 plot(ptr_frameArray.value);
 ylim([0 65535]);
+%% conoscere informazioni contenute negli special pixels
+values=struct();
+[status,values]=calllib('ESLSCDLL', 'DLLGetAllSpecialPixelInformation',drvno, 10, 0, 0,values);
+values
 %% Get data of one block
-% % This block is showing you how to get all data of one frame with one DLL call
-% % allocate memory for destination pointer of size pixel * nos * camcnt * sizeof(uint16)
-% blockArray = zeros(get(settings, 'pixel')*get(settings,'nos')*get(settings,'camcnt'),1);
-% ptr_blockArray = libpointer('uint16Ptr',blockArray);
-% % get data of block number 0
-% status = calllib('ESLSCDLL', 'DLLCopyOneBlock', board_sel, 0, ptr_blockArray, ptr_blockArray);
-% if ~strcmp(status,'es_no_error')
-%     msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
-%     error(msg)
-% end
+% This block is showing you how to get all data of one frame with one DLL call
+% allocate memory for destination pointer of size pixel * nos * camcnt * sizeof(uint16)
+blockArray = zeros(get(camera_settings, 'pixel')*get(measurement_settings,'nos')*get(camera_settings,'camcnt'),1);
+ptr_blockArray = libpointer('uint16Ptr',blockArray);
+% get data of block number 0
+[status,ptr_blockArray] = calllib('ESLSCDLL', 'DLLCopyOneBlock', drvno, 0, ptr_blockArray);
+if ~strcmp(status,'es_no_error')
+    msg = calllib('ESLSCDLL', 'DLLConvertErrorCodeToMsg', status);
+    error(msg)
+end
 %% Get all data
 % % This block is showing you how to get all data of the whole measurement with one DLL call
 % % allocate memory for destination pointer of size pixel * nos * nob * camcnt * sizeof(uint16)
